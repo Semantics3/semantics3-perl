@@ -11,7 +11,7 @@ use Data::Dumper;
 
 use Net::Semantics3::Error;
 
-our $VERSION = '0.01';
+our $VERSION = '0.1';
 
 =head1 NAME
 
