@@ -99,12 +99,12 @@ $sem3->products_field( "cat_id", 4992 );
 $sem3->products_field( "brand", "Toshiba" );
 $sem3->products_field( "weight", "gte", 1000000 );
 $sem3->products_field( "weight", "lt", 1500000 );
-$sem3->products_field( "sitedetails", "name", "amazon.com" );
+$sem3->products_field( "sitedetails", "name", "newegg.com" );
 $sem3->products_field( "sitedetails", "latestoffers", "currency", "USD" );
 $sem3->products_field( "sitedetails", "latestoffers", "price", "gte", 100 );
 
 # Let's make a modification - say we no longer want the weight attribute
-$sem3->remove( "products", "brand", "weight" );
+$sem3->remove( "products", "weight", "gte" );
 
 # Let's view the JSON query we just constructed. This is a good starting point to debug, if you are getting incorrect 
 # results for your query
