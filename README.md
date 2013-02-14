@@ -65,7 +65,7 @@ $sem3->products_field( "brand", "Toshiba" );
 my $productsRef = $sem3->get_products();
 
 # View the results of the query
-print STDERR Data::Dumper( $productsRef );
+print STDERR Dumper( $productsRef );
 ```
 
 ## Examples
@@ -84,7 +84,7 @@ $sem3->categories_field( "cat_id", 4992 );
 my $categoriesRef = $sem3->get_categories();
 
 # View the results of the query
-print STDERR Data::Dumper( $categoriesRef );
+print STDERR Dumper( $categoriesRef );
 ```
 
 ### Nested Search Query
@@ -115,7 +115,7 @@ print STDERR $constructedJson, "\n";
 my $productsRef = $sem3->get_products();
 
 # View the results of the query
-print STDERR Data::Dumper( $productsRef );
+print STDERR Dumper( $productsRef );
 ```
 
 ### Pagination
@@ -129,7 +129,7 @@ while(my $productsRef = $sem3->iterate_products()) {
     $page++;
     print STDERR "We are at page = $page\n";
     print STDERR "The results for this page are:\n";
-    print STDERR Data::Dumper( $productsRef );
+    print STDERR Dumper( $productsRef );
 }
 
 ```
@@ -154,7 +154,7 @@ my $offersRef = $sem3->get_offers();
 $offersRef = $sem3->get_results( "offers" );
 
 # View the results of the query
-print STDERR Data::Dumper( $offersRef );
+print STDERR Dumper( $offersRef );
 ```
 
 ## Contributing
