@@ -386,7 +386,7 @@ Common: {
             );  
         }
 
-        return json_encode( $self->data_query->{ $endpoint } );
+        return encode_json( $self->data_query->{ $endpoint } );
     }
 
     method get_results {
@@ -394,7 +394,7 @@ Common: {
     }
 
     method get_results_json {
-        return json_encode( $self->query_result() );
+        return encode_json( $self->query_result() );
     }
 
     method clear {
