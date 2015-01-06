@@ -72,7 +72,7 @@ The following queries show you how to interface with some of the core functional
 
 ### Pagination
 
-The example in our "Hello World" script returns the first 10 results. In this example, we'll scroll to subsequent pages, beyond our initial query
+The example in our "Hello World" script returns the first 10 results. In this example, we'll scroll to subsequent pages, beyond our initial query:
 
 ```perl
 # Build the query
@@ -157,7 +157,7 @@ Use GitHub's standard fork/commit/pull-request cycle.  If you have any questions
 
 ## Copyright
 
-Copyright (c) 2013 Semantics3 Inc.
+Copyright (c) 2015 Semantics3 Inc.
 
 ## License
 
