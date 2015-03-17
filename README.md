@@ -146,6 +146,108 @@ my $categoriesRef = $sem3->get_categories();
 print STDERR Dumper( $categoriesRef );
 ```
 
+## Webhooks
+You can use webhooks to get near-real-time price updates from Semantics3. 
+
+### Creating a webhook
+
+You can register a webhook with Semantics3 by sending a POST request to `"webhooks"` endpoint.
+To verify that your URL is active, a GET request will be sent to your server with a `verification_code` parameter. Your server should respond with `verification_code` in the response body to complete the verification process.
+
+```perl
+my $params = {
+    webhook_uri => "http://mydomain.com/webhooks-callback-url"
+};
+
+my $res = $sem3->run_query("webhooks", $params, "POST");
+my $webhookObject = decode_json( $res );
+print STDERR $webhookObject->{ 'id' }, "\n";
+print STDERR $webhookObject->{ 'webhook_uri' }, "\n";
+
+```
+To fetch existing webhooks
+```perl
+my $res = $sem3->run_query("webhooks", undef, "GET");
+my $webhooksArr = decode_json( $res );
+print STDERR Dumper( $webhooksArr ), "\n";
+```
+
+To remove a webhook
+```perl
+my $webhook_id = "7JcGN81u";
+my $endpoint = "webhooks/" . $webhook_id ;
+
+my $res = $sem3->run_query( $endpoint, undef, "DELETE" );
+print STDERR Dumper( $res );
+
+```
+
+### Registering events
+Once you register a webhook, you can start adding events to it. Semantics3 server will send you notifications when these events occur.
+To register events for a specific webhook send a POST request to the `"webhooks/{webhook_id}/events"` endpoint
+
+```perl
+my $params = {
+    "type" => "price.change",
+    "product" => {
+        "sem3_id" => "1QZC8wchX62eCYS2CACmka"
+    },
+    "constraints" => {
+        "gte" => 10,
+        "lte" => 100
+    }
+};
+
+my $webhook_id = "7JcGN81u";
+my $endpoint = "webhooks/" . $webhook_id . "/events";
+
+my $res = $sem3->run_query( $endpoint, $params, "POST" );
+my $eventObject = decode_json( $res );
+print STDERR $eventObject->{ 'id' }, "\n";
+print STDERR $eventObject->{ 'type' }, "\n";
+print STDERR $eventObject->{ 'product' }, "\n";
+```
+
+To fetch all registered events for a give webhook
+```perl
+my $webhook_id = "7JcGN81u";
+my $endpoint = "webhooks/" . $webhook_id . "/events";
+
+my $res = $sem3->run_query($endpoint, undef, "GET");
+my $eventArr = decode_json( $res );
+print STDERR Dumper( $eventArr );
+```
+
+### Webhook Notifications
+Once you have created a webhook and registered events on it, notifications will be sent to your registered webhook URI via a POST request when the corresponding events occur. Make sure that your server can accept POST requests. Here is how a sample notification object looks like
+```javascript
+{
+    "type": "price.change",
+    "event_id": "XyZgOZ5q",
+    "notification_id": "X4jsdDsW",
+    "changes": [{
+        "site": "abc.com",
+        "url": "http://www.abc.com/def",
+        "previous_price": 45.50,
+        "current_price": 41.00
+    }, {
+        "site": "walmart.com",
+        "url": "http://www.walmart.com/ip/20671263",
+        "previous_price": 34.00,
+        "current_price": 42.00
+    }]
+}
+```
+
+## Additional utility methods
+
+| method        | Description           
+| ------------- |:-------------
+| `$sem3->get_results_json()`     | returns the result json string from the previous query
+| `$sem3->clear()`                | clears all the fields in the query
+| `$sem3->run_query($endpoint, $rawJson, $method)`  | You can use this method to send raw JSON string in the request
+
+
 
 ## Contributing
 
