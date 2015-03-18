@@ -8,6 +8,7 @@ use methods;
 use JSON::XS;
 use OAuth::Lite::Consumer;
 use Data::Dumper;
+use Switch;
 
 use Net::Semantics3::Error;
 
@@ -25,31 +26,56 @@ Base for API Client interfacing with the Semantics3 APIs.
 
 has 'api_key' => ( is => 'ro', isa => 'Str', required   => 1 );
 has 'api_secret' => ( is => 'ro', isa => 'Str', required   => 1 );
-has 'api_base' => ( is => 'ro', isa => 'Str', lazy_build => 1 );
+#has 'api_base' => ( is => 'ro', isa => 'Str', lazy_build => 1 );
+has 'api_base' => ( is => 'ro', isa => 'Str' );
 has 'oauth_client' => ( is => 'ro', isa => 'Object', lazy_build => 1 );
 
-method _get {
-    my $path = shift;
-    my $jsonParams = shift;
-    return $self->_make_request( 'GET', $path, $jsonParams );
+method _request {
+    my ( $path, $jsonParams, $verb ) = @_;
+
+    switch ($verb) {
+        case "GET"    { return  $self->_make_request('GET', $path, $jsonParams);  }
+        case "PUT"    { return  $self->_make_request('PUT', $path, $jsonParams);  }
+        case "POST"    { return  $self->_make_request('POST', $path, $jsonParams);  }
+        case "DELETE"    { return  $self->_make_request('DELETE', $path, $jsonParams);  }
+        else           {
+            Net::Semantics3::Error->new(
+                type => "Invalid Method Type",
+                message => "Method type has to be one of POST, PUT, DELETE or GET"
+            );
+        }
+    }
 }
 
 method _make_request {
     my $reqType = shift;
     my $reqPath = shift;
     my $reqParamsJson = shift;
+    my $url = "https://api.semantics3.com/v1";
 
-    my $url = $self->api_base . '/' . $reqPath;
+    if(defined($self->api_base)) {
+        $url = $self->api_base;
+    }
+    $url .= '/' . $reqPath;
 
     my $resp;
     my $hashRef;
 
     my $e = eval{
-        $resp = $self->oauth_client->request(
-            method => $reqType,
-            url => $url,
-            params => {q => $reqParamsJson}
-        );
+        if($reqType eq "GET") {
+            $resp = $self->oauth_client->request(
+                method => $reqType,
+                url => $url,
+                params => {q => $reqParamsJson},
+            );
+        }
+        else {
+            $resp = $self->oauth_client->request(
+                method => $reqType,
+                url => $url,
+                content => $reqParamsJson
+            );
+        }
     };
 
     if($@) {
@@ -59,7 +85,7 @@ method _make_request {
         );
     }
 
-    if ($resp->code != 200) {
+    if ($resp->code !~ /2\d\d/ ) {
         Net::Semantics3::Error->new(
             type => "HTTP Request resulted in error: $@",
             message => $resp->status_line . " - Error code: " . $resp->code,
@@ -80,7 +106,7 @@ method _make_request {
     die "Fatal Error\n";
 }
 
-method _build_api_base { 'https://api.semantics3.com/v1' }
+#method _build_api_base { 'https://api.semantics3.com/v1' }
 
 method _build_oauth_client {
     my $ua = LWP::UserAgent->new;

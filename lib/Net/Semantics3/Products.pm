@@ -402,8 +402,18 @@ Common: {
         $self->query_result({});
     }
 
+    #-- TODO:
+    #-- get_query -> wraps run_query with hardcoded method
+    #-- post_query
+    #-- put_query
+    #-- del_query
+    #-- run_query(endpoint,data,method)
     method run_query {
-        my( $endpoint, $data ) = @_;
+        my( $endpoint, $data, $method ) = @_;
+
+        if(!defined( $method ) || $method eq "") {
+            $method = "GET";
+        }
 
         if(!defined( $endpoint ) || $endpoint eq "") {
             Net::Semantics3::Error->new(
@@ -413,10 +423,13 @@ Common: {
             );  
         }
 
-        #print STDERR Dumper( $self->data_query->{ $endpoint } );
-
         if( !defined( $data ) ) {
-            $self->query_result( $self->_get( $endpoint, encode_json( $self->data_query->{ $endpoint } ) ) );
+            my $dataQueryEndpoint = "{}";
+            if(defined($self->data_query->{ $endpoint })) {
+                $dataQueryEndpoint = encode_json( $self->data_query->{ $endpoint } );
+            }
+
+            $self->query_result( $self->_request( $endpoint, $dataQueryEndpoint, $method ) );
         }
         else {
             #-- Data is nether hash nor string
@@ -430,7 +443,7 @@ Common: {
             else {
                 #-- Data is Hash ref. Great just send it.
                 if(ref( $data ) eq "HASH") {
-                    $self->query_result( $self->_get( $endpoint, encode_json( $data ) ) );
+                    $self->query_result( $self->_request( $endpoint, encode_json( $data ), $method ) );
                 }
                 #-- Data is string
                 elsif(ref ($data) eq "") {
@@ -446,7 +459,7 @@ Common: {
                     }
                     #-- Yup it's valid JSON. Just send it.
                     else {
-                        $self->query_result( $self->_get( $endpoint, $data ) );
+                        $self->query_result( $self->_request( $endpoint, $data, $method ) );
                     }
                 }
 
