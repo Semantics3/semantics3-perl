@@ -12,7 +12,7 @@ use Switch;
 
 use Net::Semantics3::Error;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 =head1 NAME
 
