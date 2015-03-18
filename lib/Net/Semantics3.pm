@@ -32,7 +32,6 @@ has 'oauth_client' => ( is => 'ro', isa => 'Object', lazy_build => 1 );
 
 method _request {
     my ( $path, $jsonParams, $verb ) = @_;
-    print STDERR "Verb = $verb\n";
 
     switch ($verb) {
         case "GET"    { return  $self->_make_request('GET', $path, $jsonParams);  }
@@ -59,8 +58,6 @@ method _make_request {
     }
     $url .= '/' . $reqPath;
 
-    print STDERR "url = $url\n";
-
     my $resp;
     my $hashRef;
 
@@ -79,7 +76,6 @@ method _make_request {
                 content => $reqParamsJson
             );
         }
-        print STDERR Dumper( $resp ), "\n";
     };
 
     if($@) {
@@ -89,7 +85,7 @@ method _make_request {
         );
     }
 
-    if ($resp->code != 200) {
+    if ($resp->code !~ /2\d\d/ ) {
         Net::Semantics3::Error->new(
             type => "HTTP Request resulted in error: $@",
             message => $resp->status_line . " - Error code: " . $resp->code,

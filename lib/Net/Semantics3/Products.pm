@@ -423,10 +423,13 @@ Common: {
             );  
         }
 
-        #print STDERR Dumper( $self->data_query->{ $endpoint } );
-
         if( !defined( $data ) ) {
-            $self->query_result( $self->_request( $endpoint, encode_json( $self->data_query->{ $endpoint } ), $method ) );
+            my $dataQueryEndpoint = "{}";
+            if(defined($self->data_query->{ $endpoint })) {
+                $dataQueryEndpoint = encode_json( $self->data_query->{ $endpoint } );
+            }
+
+            $self->query_result( $self->_request( $endpoint, $dataQueryEndpoint, $method ) );
         }
         else {
             #-- Data is nether hash nor string
