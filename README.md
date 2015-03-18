@@ -160,16 +160,12 @@ my $params = {
 };
 
 my $res = $sem3->run_query("webhooks", $params, "POST");
-my $webhookObject = decode_json( $res );
-print STDERR $webhookObject->{ 'id' }, "\n";
-print STDERR $webhookObject->{ 'webhook_uri' }, "\n";
-
+print STDERR Dumper( $res ), "\n";
 ```
 To fetch existing webhooks
 ```perl
 my $res = $sem3->run_query("webhooks", undef, "GET");
-my $webhooksArr = decode_json( $res );
-print STDERR Dumper( $webhooksArr ), "\n";
+print STDERR Dumper( $res ), "\n";
 ```
 
 To remove a webhook
@@ -179,7 +175,6 @@ my $endpoint = "webhooks/" . $webhook_id ;
 
 my $res = $sem3->run_query( $endpoint, undef, "DELETE" );
 print STDERR Dumper( $res );
-
 ```
 
 ### Registering events
@@ -202,10 +197,7 @@ my $webhook_id = "7JcGN81u";
 my $endpoint = "webhooks/" . $webhook_id . "/events";
 
 my $res = $sem3->run_query( $endpoint, $params, "POST" );
-my $eventObject = decode_json( $res );
-print STDERR $eventObject->{ 'id' }, "\n";
-print STDERR $eventObject->{ 'type' }, "\n";
-print STDERR $eventObject->{ 'product' }, "\n";
+print STDERR Dumper( $res ), "\n";
 ```
 
 To fetch all registered events for a give webhook
@@ -214,8 +206,7 @@ my $webhook_id = "7JcGN81u";
 my $endpoint = "webhooks/" . $webhook_id . "/events";
 
 my $res = $sem3->run_query($endpoint, undef, "GET");
-my $eventArr = decode_json( $res );
-print STDERR Dumper( $eventArr );
+print STDERR Dumper( $res ), "\n";
 ```
 
 ### Webhook Notifications
