@@ -4,12 +4,12 @@ use strict;
 use warnings;
 
 use Moose;
+use Switch;
 use methods;
 use JSON::XS;
-use OAuth::Lite::Consumer;
 use Data::Dumper;
-use Switch;
-
+use URL::Normalize;
+use OAuth::Lite::Consumer;
 use Net::Semantics3::Error;
 
 our $VERSION = '0.2';
@@ -57,6 +57,13 @@ method _make_request {
         $url = $self->api_base;
     }
     $url .= '/' . $reqPath;
+
+    #-- Normalize the request url ( remove duplicate slashes if any )
+    my $Normalizer = URL::Normalize->new(
+        url => $url,
+    );
+    $Normalizer->remove_duplicate_slashes();
+    $url = $Normalizer->get_url();
 
     my $resp;
     my $hashRef;
