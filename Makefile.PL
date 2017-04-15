@@ -32,6 +32,11 @@ WriteMakefile(
         'namespace::clean'      => 0,
         'Data::Dumper'          => 0,
     },
+    META_MERGE => {
+        resources => {
+            repository => 'https://github.com/Semantics3/semantics3-perl',
+        },
+    },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Net-Semantics3-*' },
 );
